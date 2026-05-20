@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+
+{% block title %}Daftar Barang - Inventaris Praktikum{% endblock %}
+
+{% block content %}
+<div class="pt-4 md:pt-8">
+<div class="bg-white shadow rounded-lg p-6">
+    <!-- Header dengan tombol kembali -->
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">Daftar Barang</h1>
+        <div class="flex space-x-3">
+            <a href="{% url 'inventaris:dashboard' %}" class="inline-flex items-center px-4 py-2 bg-gray-600 text-white text-sm font-medium rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                Kembali ke Dashboard
+            </a>
+            <a href="{% url 'inventaris:tambah_barang' %}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+                Tambah Barang Baru
+            </a>
+        </div>
+    </div>
+
+    <!-- Form Pencarian dan Filter -->
+    <div class="bg-gray-50 p-4 rounded-lg mb-6">
+        <form method="get" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div>
+                <input type="text" name="search" value="{{ search_query }}" placeholder="Cari barang..." 
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            
+            <div>
+                <select name="kondisi" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">Semua Kondisi</option>
+                    <option value="baik" {% if kondisi_filter == 'baik' %}selected{% endif %}>Baik</option>
+                    <option value="rusak_ringan" {% if kondisi_filter == 'rusak_ringan' %}selected{% endif %}>Rusak Ringan</option>
+                    <option value="rusak_berat" {% if kondisi_filter == 'rusak_berat' %}selected{% endif %}>Rusak Berat</option>
+                </select>
+            </div>
+            
+            <div>
+                <select name="lokasi" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">Semua Lokasi</option>
+                    {% for lokasi in lokasi_list %}
+                        <option value="{{ lokasi.id }}" {% if lokasi_filter == lokasi.id|stringformat:"s" %}selected{% endif %}>
+                            {{ lokasi.nama_lokasi }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="flex space-x-2">
+                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    Filter
+                </button>
+                <a href="{% url 'inventaris:list_barang' %}" class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500">
+                    Reset
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Statistik Filter -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <div class="bg-blue-50 p-4 rounded-lg">
+            <div class="text-blue-600 font-semibold">Total</div>
+            <div class="text-2xl font-bold text-blue-800">{{ total_barang }}</div>
+        </div>
+        <div class="bg-green-50 p-4 rounded-lg">
+            <div class="text-green-600 font-semibold">Baik</div>
+            <div class="text-2xl font-bold text-green-800">{{ barang_baik }}</div>
+        </div>
+        <div class="bg-yellow-50 p-4 rounded-lg">
+            <div class="text-yellow-600 font-semibold">Rusak Ringan</div>
+            <div class="text-2xl font-bold text-yellow-800">{{ barang_rusak_ringan }}</div>
+        </div>
+        <div class="bg-red-50 p-4 rounded-lg">
+            <div class="text-red-600 font-semibold">Rusak Berat</div>
+            <div class="text-2xl font-bold text-red-800">{{ barang_rusak_berat }}</div>
+        </div>
+    </div>
+
+    <!-- Tabel Barang -->
+    {% if barang_list %}
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Barang</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jumlah</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Digunakan</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sisa</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kondisi</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Lokasi</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for barang in barang_list %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ barang.nama_barang }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ barang.tanggal }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ barang.jumlah }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ barang.digunakan }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ barang.sisa }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                {% if barang.kondisi == 'baik' %}bg-green-100 text-green-800
+                                {% elif barang.kondisi == 'rusak_ringan' %}bg-yellow-100 text-yellow-800
+                                {% else %}bg-red-100 text-red-800{% endif %}">
+                                {{ barang.get_kondisi_display }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ barang.lokasi.nama_lokasi }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                            <a href="{% url 'inventaris:detail_barang' barang.id %}" class="text-blue-600 hover:text-blue-900">Detail</a>
+                            <a href="{% url 'inventaris:edit_barang' barang.id %}" class="text-green-600 hover:text-green-900">Edit</a>
+                            <a href="{% url 'inventaris:hapus_barang' barang.id %}" class="text-red-600 hover:text-red-900">Hapus</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="text-center py-12">
+            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
+            </svg>
+            <h3 class="mt-2 text-sm font-medium text-gray-900">Tidak ada barang</h3>
+            <p class="mt-1 text-sm text-gray-500">Mulai dengan menambahkan barang baru.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+

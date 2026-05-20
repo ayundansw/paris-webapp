@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+
+{% block title %}Detail Barang - Inventaris Praktikum{% endblock %}
+
+{% block content %}
+
+<div class="bg-white shadow rounded-lg p-6">
+    <!-- Header dengan tombol kembali -->
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">Detail Barang</h1>
+        <div class="flex space-x-3">
+            <a href="{% url 'inventaris:dashboard' %}" class="inline-flex items-center px-4 py-2 bg-gray-600 text-white text-sm font-medium rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                Kembali ke Dashboard
+            </a>
+            <a href="{% url 'inventaris:edit_barang' barang.id %}" class="inline-flex items-center px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                </svg>
+                Edit Barang
+            </a>
+        </div>
+    </div>
+
+    <!-- Info Barang -->
+    <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
+        <h2 class="text-2xl font-bold text-blue-900 mb-4">{{ barang.nama_barang }}</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-4">
+                <div class="flex justify-between">
+                    <span class="font-medium text-gray-700">Tanggal:</span>
+                    <span class="text-gray-900">{{ barang.tanggal }}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="font-medium text-gray-700">Nama Barang:</span>
+                    <span class="text-gray-900">{{ barang.nama_barang }}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="font-medium text-gray-700">Jumlah Stok:</span>
+                    <span class="text-gray-900">{{ barang.jumlah }}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="font-medium text-gray-700">Digunakan:</span>
+                    <span class="text-gray-900">{{ barang.digunakan }}</span>
+                </div>
+            </div>
+            <div class="space-y-4">
+                <div class="flex justify-between">
+                    <span class="font-medium text-gray-700">Sisa:</span>
+                    <span class="text-gray-900">{{ barang.sisa }}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="font-medium text-gray-700">Kondisi:</span>
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                        {% if barang.kondisi == 'baik' %}bg-green-100 text-green-800
+                        {% elif barang.kondisi == 'rusak_ringan' %}bg-yellow-100 text-yellow-800
+                        {% else %}bg-red-100 text-red-800{% endif %}">
+                        {{ barang.get_kondisi_display }}
+                    </span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="font-medium text-gray-700">Lokasi:</span>
+                    <span class="text-gray-900">{{ barang.lokasi.nama_lokasi }} ({{ barang.lokasi.kode_lokasi }})</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="font-medium text-gray-700">Deskripsi:</span>
+                    <span class="text-gray-900">{{ barang.deskripsi|default:"-" }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Foto Barang Section -->
+    <div class="mt-8">
+        <h2 class="text-xl font-bold text-gray-800 mb-4">Foto Barang</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+            {% for foto in foto_list %}
+            <div class="relative group border rounded-lg overflow-hidden">
+                {% if foto.foto_barang %}
+                <img src="{{ foto.foto_barang.url }}" alt="Foto {{ barang.nama_barang }}" class="object-cover w-full h-40">
+                {% else %}
+                <div class="flex items-center justify-center w-full h-40 bg-gray-100 text-gray-400">Tidak ada file</div>
+                {% endif %}
+                <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition">
+                    <form method="post" action="{% url 'inventaris:hapus_foto_barang' foto.id %}" class="inline">
+                        {% csrf_token %}
+                        <button type="submit" class="px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700">Hapus</button>
+                    </form>
+                    <a href="{% url 'inventaris:edit_foto_barang' foto.id %}" class="ml-2 px-3 py-1 bg-yellow-500 text-white text-xs rounded hover:bg-yellow-600">Edit</a>
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-gray-500 col-span-4">Belum ada foto barang.</p>
+            {% endfor %}
+        </div>
+        <form method="post" enctype="multipart/form-data" class="mt-4 bg-gray-50 p-4 rounded-lg border">
+            {% csrf_token %}
+            {{ form_foto.as_p }}
+            <button type="submit" class="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Tambah Foto</button>
+        </form>
+    </div>
+
+    <!-- Tombol Aksi -->
+    <div class="flex justify-center space-x-4 pt-6 border-t border-gray-200">
+        <a href="{% url 'inventaris:list_barang' %}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+            </svg>
+            Lihat Semua Barang
+        </a>
+        <a href="{% url 'inventaris:detail_lokasi' barang.lokasi.id %}" class="inline-flex items-center px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            </svg>
+            Lihat Lokasi
+        </a>
+    </div>
+</div>
+{% endblock %}

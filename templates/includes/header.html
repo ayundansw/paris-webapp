@@ -1,0 +1,39 @@
+
+<nav class="fixed top-0 left-0 right-0 z-30 bg-gradient-to-r from-indigo-800 via-blue-700 to-green-500 border-b border-indigo-900 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
+        <div class="flex justify-between h-16">
+            <div class="flex items-center">
+                <a href="{% url 'home' %}" class="flex-shrink-0 flex items-center">
+                    <span class="text-white text-2xl font-extrabold tracking-tight drop-shadow">PARIS <span class="text-green-300">•</span></span>
+                </a>
+            </div>
+            <div class="flex items-center space-x-2 sm:space-x-4">
+                {% if user.is_authenticated %}
+                    <!-- Menu dashboard, profil, logout untuk user login -->
+                    <a href="{% url 'inventaris:dashboard' %}" class="nav-link px-3 py-2 rounded-md text-base font-semibold {% if request.resolver_match.url_name == 'dashboard' %}bg-white bg-opacity-10 text-green-200 font-bold shadow{% else %}text-white hover:bg-white hover:bg-opacity-10 hover:text-green-200{% endif %}">Dashboard</a>
+                    <a href="{% url 'accounts:profile' %}" class="nav-link px-3 py-2 rounded-md text-base font-semibold {% if request.resolver_match.url_name == 'profile' %}bg-white bg-opacity-10 text-green-200 font-bold shadow{% else %}text-white hover:bg-white hover:bg-opacity-10 hover:text-green-200{% endif %}">Profil</a>
+                    <a href="#" id="logout-link" class="nav-link px-3 py-2 rounded-md text-base font-semibold text-white bg-gradient-to-r from-pink-500 to-indigo-500 hover:from-pink-600 hover:to-indigo-600">Logout</a>
+                {% else %}
+                    <!-- Menu home, login, register untuk user guest -->
+                    <a href="{% url 'home' %}" class="nav-link px-3 py-2 rounded-md text-base font-semibold text-white hover:bg-white hover:bg-opacity-10 hover:text-green-200">Home</a>
+                    <a href="{% url 'accounts:login' %}" class="nav-link px-3 py-2 rounded-md text-base font-semibold text-white bg-gradient-to-r from-blue-500 to-green-400 hover:from-blue-600 hover:to-green-500">Login</a>
+                    <a href="{% url 'accounts:register' %}" class="nav-link px-3 py-2 rounded-md text-base font-semibold text-white bg-gradient-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600">Register</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</nav>
+<script>
+    // Konfirmasi popup sebelum logout
+    document.addEventListener('DOMContentLoaded', function() {
+        var logoutLink = document.getElementById('logout-link');
+        if (logoutLink) {
+            logoutLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (confirm('Apakah anda yakin ingin logout?')) {
+                    window.location.href = "{% url 'accounts:logout' %}";
+                }
+            });
+        }
+    });
+</script>

@@ -1,0 +1,54 @@
+<aside id="sidebar" class="fixed top-16 left-0 z-20 h-full w-56 bg-gradient-to-b from-indigo-800 via-blue-700 to-green-500 border-r border-indigo-900 transition-all duration-300 ease-in-out shadow-xl flex flex-col">
+    <div class="flex flex-col h-full">
+        <button class="p-2 self-center my-2 focus:outline-none flex items-center justify-center" style="height:40px" onclick="toggleSidebar()">
+            <span class="material-icons text-white text-3xl flex items-center justify-center">menu</span>
+        </button>
+        <nav class="flex-1 mt-4 space-y-2">
+            <!-- Link ke Data Barang -->
+            <a href="{% url 'inventaris:list_barang' %}" class="sidebar-link flex items-center px-4 py-2 rounded-lg transition-colors duration-200 text-white hover:bg-white hover:bg-opacity-10 hover:text-green-200 text-sm md:text-base {% if request.resolver_match.url_name == 'list_barang' %}bg-white bg-opacity-10 text-green-200 font-bold{% endif %}">
+                <span class="material-icons mr-3 flex items-center justify-center w-6 h-6 text-blue-200">inventory_2</span>
+                <span class="sidebar-text">Data Barang</span>
+            </a>
+            <!-- Link ke Tambah Barang -->
+            <a href="{% url 'inventaris:tambah_barang' %}" class="sidebar-link flex items-center px-4 py-2 rounded-lg transition-colors duration-200 text-white hover:bg-white hover:bg-opacity-10 hover:text-green-200 text-sm md:text-base {% if request.resolver_match.url_name == 'tambah_barang' %}bg-white bg-opacity-10 text-green-200 font-bold{% endif %}">
+                <span class="material-icons mr-3 flex items-center justify-center w-6 h-6 text-green-200">add_box</span>
+                <span class="sidebar-text">Tambah Barang</span>
+            </a>
+            <!-- Link ke Data Lokasi -->
+            <a href="{% url 'inventaris:list_lokasi' %}" class="sidebar-link flex items-center px-4 py-2 rounded-lg transition-colors duration-200 text-white hover:bg-white hover:bg-opacity-10 hover:text-green-200 text-sm md:text-base {% if request.resolver_match.url_name == 'list_lokasi' %}bg-white bg-opacity-10 text-green-200 font-bold{% endif %}">
+                <span class="material-icons mr-3 flex items-center justify-center w-6 h-6 text-purple-200">location_on</span>
+                <span class="sidebar-text">Data Lokasi</span>
+            </a>
+            <!-- Link ke Tambah Lokasi -->
+            <a href="{% url 'inventaris:tambah_lokasi' %}" class="sidebar-link flex items-center px-4 py-2 rounded-lg transition-colors duration-200 text-white hover:bg-white hover:bg-opacity-10 hover:text-green-200 text-sm md:text-base {% if request.resolver_match.url_name == 'tambah_lokasi' %}bg-white bg-opacity-10 text-green-200 font-bold{% endif %}">
+                <span class="material-icons mr-3 flex items-center justify-center w-6 h-6 text-orange-200">add_location</span>
+                <span class="sidebar-text">Tambah Lokasi</span>
+            </a>
+            <!-- Link ke Profil User -->
+            <a href="{% url 'accounts:profile' %}" class="sidebar-link flex items-center px-4 py-2 rounded-lg transition-colors duration-200 text-white hover:bg-white hover:bg-opacity-10 hover:text-green-200 text-sm md:text-base {% if request.resolver_match.url_name == 'profile' %}bg-white bg-opacity-10 text-green-200 font-bold{% endif %}">
+                <span class="material-icons mr-3 flex items-center justify-center w-6 h-6 text-pink-200">person</span>
+                <span class="sidebar-text">Profil</span>
+            </a>
+        </nav>
+    </div>
+    <script>
+        // Hide/show sidebar text dan ubah lebar sidebar saat minimize/maximize
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const texts = sidebar.querySelectorAll('.sidebar-text');
+            if (sidebar.classList.contains('w-56')) {
+                sidebar.classList.remove('w-56');
+                sidebar.classList.add('w-16');
+            } else {
+                sidebar.classList.remove('w-16');
+                sidebar.classList.add('w-56');
+            }
+            if (sidebar.classList.contains('w-16')) {
+                texts.forEach(t => t.classList.add('hidden'));
+            } else {
+                texts.forEach(t => t.classList.remove('hidden'));
+            }
+            if (window.updateMainContentPadding) window.updateMainContentPadding();
+        }
+    </script>
+</aside>

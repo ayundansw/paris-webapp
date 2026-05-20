@@ -1,0 +1,27 @@
+[tool.pylint.messages_control]
+disable = [
+    "E1101",  # no-member → Django ORM objects
+    "C0114",  # missing-module-docstring → Tidak perlu docstring di setiap file
+    "C0115",  # missing-class-docstring → Tidak perlu docstring di setiap class
+    "C0116",  # missing-function-docstring → Tidak perlu docstring di setiap function
+    "R0903",  # too-few-public-methods → Django model biasanya sedikit method
+    "R0913",  # too-many-arguments → Django view bisa banyak parameter
+    "W0622",  # redefined-builtin → Django sering pakai 'id', 'pk'
+]
+
+[tool.pylint.format]
+max-line-length = 120
+
+[tool.pylint.basic]
+good-names = ["id", "db", "pk", "i", "j", "k", "ex", "Run", "_"] # Nama variabel yang diizinkan (biasanya dilarang oleh linter)
+
+[tool.pylint.design]
+max-args = 10
+max-attributes = 10
+max-bool-expr = 5
+max-branches = 15
+max-locals = 20
+max-parents = 7
+max-public-methods = 30
+max-returns = 10
+max-statements = 60 

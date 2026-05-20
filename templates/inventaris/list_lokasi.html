@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}Daftar Lokasi - Inventaris Praktikum{% endblock %}
+
+{% block content %}
+<div class="pt-4 md:pt-8">
+<div class="bg-white shadow rounded-lg p-6">
+    <!-- Header dengan tombol kembali -->
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">Daftar Lokasi</h1>
+        <div class="flex space-x-3">
+            <a href="{% url 'inventaris:dashboard' %}" class="inline-flex items-center px-4 py-2 bg-gray-600 text-white text-sm font-medium rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                Kembali ke Dashboard
+            </a>
+            <a href="{% url 'inventaris:tambah_lokasi' %}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+                Tambah Lokasi Baru
+            </a>
+        </div>
+    </div>
+
+    <!-- Tabel Lokasi -->
+    {% if lokasi_list %}
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Lokasi</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kode Lokasi</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jumlah Barang</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for lokasi in lokasi_list %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ lokasi.nama_lokasi }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ lokasi.kode_lokasi }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                {{ lokasi.jumlah_barang }} barang
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                            <a href="{% url 'inventaris:detail_lokasi' lokasi.id %}" class="text-blue-600 hover:text-blue-900">Detail</a>
+                            <a href="{% url 'inventaris:edit_lokasi' lokasi.id %}" class="text-green-600 hover:text-green-900">Edit</a>
+                            <a href="{% url 'inventaris:hapus_lokasi' lokasi.id %}" class="text-red-600 hover:text-red-900">Hapus</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="text-center py-12">
+            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            </svg>
+            <h3 class="mt-2 text-sm font-medium text-gray-900">Tidak ada lokasi</h3>
+            <p class="mt-1 text-sm text-gray-500">Mulai dengan menambahkan lokasi baru.</p>
+        </div>
+    {% endif %}
+</div>
+</div>
+
+{% endblock %}
